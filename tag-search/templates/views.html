@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PBH Front App</title>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <!--HEADER-->
+        <header class="uk-box-shadow-small  uk-animation-slide-top-medium" style="background-color: white">
+            <div class="uk-container uk-container-expand">
+                <nav class="uk-navbar" id="navbar" data-uk-navbar>
+                    <div class="uk-navbar-left">
+                        <a class="uk-navbar-item uk-logo" href="#">Logo</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <!--/HEADER-->
+
+        <!-- OFFCANVAS -->
+        <div id="offcanvas-nav" data-uk-offcanvas="flip: true; overlay: true">
+            <div class="uk-offcanvas-bar">
+                <button class="uk-offcanvas-close uk-close uk-icon" type="button" data-uk-close></button>
+                <ul v-show="isAdmin" class="uk-nav uk-nav-default">
+                    <li><a v-on:click="setMenu('contact')" href="#">Contact</a></li>
+                    <li><a v-on:click="setMenu('tag')" href="#">Tag</a></li>
+                </ul>
+                <ul v-show="isLogged" class="uk-nav uk-nav-default">
+                    <li><a @click="logout" href="#">Sign Out</a></li>
+                </ul>
+                <spinner v-show="showSpinner"></spinner>
+            </div>
+        </div>
+        <!-- /OFFCANVAS -->
+
+        <div class="uk-section-xsmall uk-section-muted uk-animation-fade" uk-height-viewport>
+            <div v-show="!isLogged" class="uk-width-1-1">
+                <div class="uk-container">
+                    <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
+                        <div class="uk-width-1-1@m">
+                            <div
+                                class="uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
+                                <h3 class="uk-card-title uk-text-center">Login</h3>
+                                <form action="javascript:void(0);">
+                                    <div class="uk-margin">
+                                        <div class="uk-inline uk-width-1-1">
+                                            <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                            <input class="uk-input uk-form-large" type="text" v-model="user">
+                                        </div>
+                                    </div>
+                                    <div class="uk-margin">
+                                        <div class="uk-inline uk-width-1-1">
+                                            <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                                            <input class="uk-input uk-form-large" type="password" v-model="pass">
+                                        </div>
+                                    </div>
+                                    <div class="uk-margin">
+                                        <button class="uk-button uk-button-primary uk-button-large uk-width-1-1"
+                                            v-bind:disabled="disableBtnLogin" @click="auth">Login</button>
+                                        <spinner v-show="showSpinner"></spinner>
+                                    </div>
+                                    <div class="uk-text-small uk-text-center">
+                                        Not registered? <a href="#">Create an account</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section v-show="isLogged&&isAdmin" class="uk-section uk-section-default">
+                <spinner v-show="showSpinner"></spinner>
+                <div class="uk-container">
+                    <h3 class="uk-text-bold uk-text-capitalize">MENU</h3>
+                    <div class="uk-overflow-auto">
+                        <table
+                            class="uk-table uk-table-small uk-table-responsive uk-table-justify uk-table-divider uk-table-striped uk-table-hover">
+                            <thead>
+                                <button v-show="menu" v-bind:disabled="disableBtnLogin"
+                                    class="uk-button uk-button-primary uk-button-small uk-button-successful"
+                                    @click="loadModalEdit(null,0)"><span uk-icon="plus"></span></button>
+                                <tr>
+                                    <th class="uk-width-small uk-text-center" v-for="item in tableHeader">
+                                        ITEM</th>
+                                    <th class="uk-width-small uk-text-center" v-if="result">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="uk-text-center" v-for="(item,index) in result" v-bind:key="item.id">
+                                    <td class="uk-width-small" v-for="(value,key) in item"
+                                        v-if="excludedColumns.indexOf(key) === -1">Valor</td>
+                                    <td class="uk-width-small">
+                                        <button v-bind:disabled="disableBtnLogin"
+                                            class="uk-button uk-button-primary uk-button-small"
+                                            @click="loadModalEdit(index,item.id)"><span
+                                                uk-icon="file-edit"></span></button>
+                                        <button v-bind:disabled="disableBtnLogin"
+                                            class="uk-button uk-button-danger uk-button-small"
+                                            @click="removeItem(item.id)"><span uk-icon="trash"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <!--tfoot>
+                                <tr>
+                                    <th scope="row">Totals</th>
+                                    <td>
+                                        <ul class="uk-pagination">
+                                            <li><a href=""><span uk-pagination-previous></span></a></li>
+                                            <li><a href=""><span uk-pagination-next></span></a></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tfoot-->
+                        </table>
+                    </div>
+                </div>
+                <div id="modal-edit" uk-modal>
+                    <div class="uk-modal-dialog">
+                        <button class="uk-modal-close-default" type="button" uk-close></button>
+                        <div class="uk-modal-header">
+                            <h2 class="uk-modal-title">MODAL</h2>
+                        </div>
+                        <div class="uk-modal-body">
+                            <div v-for=" item in this.modal.fields" class="uk-margin">
+                                <div class="uk-inline uk-width-1-1">
+                                    <input v-if="item.tag == 'input'" class="uk-input uk-form-large" type="item.type"
+                                        v-bind:placeholder="item.label" v-model="item.value" :disabled='item.disabled'
+                                        required>
+                                    <select v-else-if="item.tag == 'select'" class="uk-select">
+                                        <option v-for=" option in item.options" :value="option.id">{{option.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-modal-footer uk-text-right">
+                            <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                            <button class="uk-button uk-button-primary" type="button" @click="saveItem"
+                                v-bind:disabled="disableBtnLogin">Save</button>
+                            <spinner v-show="showSpinner"></spinner>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section v-show="isLogged&&!isAdmin" class="uk-section uk-section-default uk-animation-fade">
+                <div class="uk-container">
+                    <h3 class="uk-text-bold">What do you are searching?</h3>
+                    <div class="uk-overflow-auto">
+                        <form action="javascript:void(0);">
+                            <div class="uk-margin">
+                                <div class="uk-inline uk-width-1-1 uk-search uk-search-default">
+                                    <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: search"></span>
+                                    <input class="uk-input uk-border-pill" required placeholder="Type here"
+                                        type="search" v-model="textSearch">
+                                </div>
+                            </div>
+
+
+                            <div class="uk-margin">
+                                <div class="uk-inline uk-width-1-1">
+                                    <button type="submit" @click="search"
+                                        class="uk-button uk-button-primary uk-border-pill uk-width-1-1">Search</button>
+                                    <spinner v-show="showSpinner"></spinner>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="uk-container">
+                    <h3 v-show="resultSearch" class="uk-text-bold uk-text-capitalize">Search Results</h3>
+                    <div class="uk-overflow-auto">
+                        <table
+                            class="uk-table uk-table-small uk-table-responsive uk-table-justify uk-table-divider uk-table-striped uk-table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="uk-width-small uk-text-center" v-for="item in tableHeader">
+                                        ITEM</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr @click="loadModalInfo(index,item.id)" class="uk-text-center"
+                                    v-for="(item,index) in resultSearch" v-bind:key="item.id">
+                                    <td class="uk-width-small" v-for="(value,key) in item"
+                                        v-if="excludedColumnsSearch.indexOf(key) === -1">{{value}}</td>
+                                </tr>
+                            </tbody>
+                            <!--tfoot>
+                                <tr>
+                                    <th scope="row">Totals</th>
+                                    <td>
+                                        <ul class="uk-pagination">
+                                            <li><a href=""><span uk-pagination-previous></span></a></li>
+                                            <li><a href=""><span uk-pagination-next></span></a></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tfoot-->
+                        </table>
+                    </div>
+                </div>
+                <div id="modal-info" uk-modal>
+                    <div class="uk-modal-dialog">
+                        <button class="uk-modal-close-default" type="button" uk-close></button>
+                        <div class="uk-modal-header">
+                            <h2 class="uk-modal-title">Place</h2>
+                        </div>
+                        <div class="uk-modal-body">
+                            <div v-for=" item in this.modal.fields" class="uk-margin">
+                                <div class="uk-inline uk-width-1-1">
+                                    <article class="uk-article">
+                                        <h1 class="uk-article-title">{{item.name}}</h1>
+                                        <p class="uk-text-lead">{{item.phone}}</p>
+                                        <p>{{item.address}}</p>
+                                    </article>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-modal-footer uk-text-right">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+
+</body>
+<script src="slugify.js"></script>
+<script src="fingerprint.js"></script>
+<script>
+    console.log(get_fingerprint());
+    function initFingerprintJS() {
+      // Initialize an agent at application startup.
+      const fpPromise = FingerprintJS.load()
+  
+      // Get the visitor identifier when you need it.
+      fpPromise
+        .then(fp => fp.get())
+        .then(result => {
+          // This is the visitor identifier:
+          const visitorId = result.visitorId
+          console.log(visitorId)
+        })
+        .catch(error => console.error(error))
+    }
+  </script>
+  <script
+    async
+    src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
+    onload="initFingerprintJS()"
+    onerror="console.error('Failed to load the script')"
+  ></script>
+</html>

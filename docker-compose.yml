@@ -1,0 +1,17 @@
+version: '3.7'
+
+volumes:
+    logs:
+        driver: local
+
+services:
+    tag-search:
+        build: .
+        image: tag-search
+        container_name: tag-search
+        working_dir: /usr/src/app
+        ports:
+            - 80:${FLASK_PORT}
+        tty: true
+        volumes:
+            - .:/usr/src/app
