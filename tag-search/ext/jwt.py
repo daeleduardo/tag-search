@@ -1,19 +1,18 @@
-
 import jwt, datetime,os
+from flask import current_app
 
 class jwt_handler():
 
     @staticmethod
-    def get_jwt_encode (self,dict):
-        dict["exp"] = datetime.datetime.utcnow() + datetime.timedelta(hours=4)    
-        return jwt.encode(dict, os.getenv("JWT_TOKEN"), algorithm="HS256")
+    def get_jwt_encode (dict):
+        return jwt.encode(dict, current_app.config['JWT_SECRET_KEY'], algorithm="RS256")
 
 
     @staticmethod
-    def get_jwt_decode (self,str):
+    def get_jwt_decode (str):
         try:
-            return jwt.decode(str, os.getenv("JWT_TOKEN"), algorithms=["HS256"])
+            return jwt.decode(str, current_app.config['JWT_PUBLIC_KEY'], algorithms=["RS256"])
         except jwt.ExpiredSignatureError:
-            return 'Signature expired. Please log in again.'
+            return { 'error' :'Signature expired. Please log in again.'}
         except jwt.InvalidTokenError:
-            return 'Invalid token. Please log in again.'
+            return { 'error' :'Invalid token. Please log in again.'}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tag Search Page Not Found</title>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body>
+    <span class="uk-margin-left" uk-spinner="ratio: 0.5"></span><span class="uk-margin-small-left">Redirecting....</span>
+    <script>
+        setTimeout(function() {
+            window.location.replace("{{url_for('user.home')}}");
+        }, 1000);
+    </script>
+</body>
+</html>

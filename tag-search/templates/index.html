@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge">
+    <title>Mapper Place</title>
+    <meta name="description" content="Search places by tags">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <div id="menu"
+        class="uk-section uk-section-muted uk-section-xsmall uk-animation-slide-bottom-small uk-padding-remove-vertical">
+        <div class="uk-container uk-container-xsmall">
+            <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-wrap uk-flex-column">
+                <div>
+                    <label class="uk-form-label uk-hidden@m">
+                        <p>Enter the activity or location you are looking for:</p>
+                    </label>
+                    <h2 class="uk-heading-xsmall uk-visible@m">Enter the activity or location you are looking for:</h2>
+                </div>
+                <div class="uk-inline uk-width-1-1">
+                    <a onclick="filterMarkersByTags()" style="color:white" href="#" aria-label="Botão para busca"
+                        class="uk-form-icon uk-form-icon-flip uk-border-pill uk-form-small uk-background-primary"
+                        href="#" uk-icon="icon: search"></a>
+                    <input id="txtSearch" class="uk-input uk-border-pill uk-form-small" type="search"
+                        placeholder="Tip here or click on search button....">
+                        <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}"/>
+                </div>
+                <!--div class="uk-margin-top uk-flex uk-flex-center uk-flex-middle uk-flex-wrap">
+                    <span class="">Pesquisar por categorias:</span>
+                    <a onclick="filterMarkersByCategory('parques')" class="uk-text-decoration-none"><span
+                            class="uk-badge uk-margin-small-left">Parques</span></a>
+                    <a onclick="filterMarkersByCategory('praca')" class="uk-text-decoration-none"><span
+                            class="uk-badge uk-margin-small-left">Praças</span></a>
+                    <a onclick="filterMarkersByCategory('outros')" class="uk-text-decoration-none"><span
+                            class="uk-badge uk-margin-small-left">Outros</span></a>
+                    <a onclick="filterMarkersByCategory('')" class="uk-text-decoration-none"><span
+                            class="uk-badge uk-margin-small-left">Todas categorias</span></a>
+                </div-->
+                <div id="spinner" uk-spinner></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content" class="uk-section uk-section-muted uk-section-xsmall uk-animation-slide-bottom-small">
+        <div class="uk-container uk-container-expand uk-padding-remove-horizontal">
+            <div id="map" class="uk-invisible" uk-height-viewport="expand: true"></div>
+        </div>
+    </div>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/js/uikit-icons.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    
+    <script src={{ url_for('static', filename='client.js' ) }}></script>
+    <script src={{ url_for('static', filename='map.js' ) }}></script>
+    <script src={{ url_for('static', filename='components.js' ) }}></script>
+    <link rel="stylesheet" href={{ url_for('static', filename='client.css' ) }} />
+
+    <script>
+
+        // Inicializa o mapa
+        var map;
+        var db;
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            setTimeout(() => {
+                addSlugify();
+                startMap();        
+            }, 1500)
+
+        });
+
+        function startMap() {
+            fetch('/place', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.getElementById('csrf_token').value
+                }
+            })
+            .then(response => response.json())
+            .then( (data) => {
+                const maps = new Maps();
+                map = maps.createMap({
+                    'divId': 'map',
+                    'lat': -19.852031,
+                    'lng': -43.977785,
+                    'zoom': 14,
+                    'tileServer': maps.tileServers.OPENSTREETMAP,
+                    'mapKey': null
+                });
+
+                addMarkerPlaces(data);
+                db = data;
+            });
+
+        }
+        
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tag Search Home Page</title>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body onload="createTxtTagComponent()">
+
+    <div id="app">
+        <!--HEADER-->
+        <header class="uk-box-shadow-small uk-animation-slide-top-medium uk-background-default">
+            <div class="uk-container uk-container-expand">
+                <nav class="uk-navbar" id="navbar" data-uk-navbar>
+                    <div class="uk-navbar-left">
+                        <a class="uk-navbar-item uk-logo" href="#">Tag Search</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <!--/HEADER-->
+
+        <section class="uk-section uk-section-default">
+            <div class="uk-container">
+                <h3 class="uk-text-bold uk-text-capitalize">Places</h3>
+
+                <table id="content"
+                    class="uk-table uk-table-small uk-table-responsive uk-table-justify uk-table-divider uk-table-striped uk-table-hover">
+                    <caption></caption>
+                    <thead uk-sticky="bottom: #offset">
+                        <button class="uk-button uk-button-primary uk-button-small uk-button-successful uk-border-pill"
+                            onclick="loadModal()"><span uk-icon="plus"></span></button>
+                        <tr>
+                            {% if data %}
+                                {% for value in data['places_keys'][0] %}
+                                    <th scope="col" class="uk-width-small uk-text-center"> {{ value }} </th>
+                                {% endfor %}
+                                <th scope="col" class="uk-width-small uk-text-center">Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if data %}
+                            {% for place in data['places'] %}
+                                <tr class="uk-text-center">
+                                    {% for field in place %}
+                                            <td class="uk-width-small uk-text-center"> {{ field }} </th>
+                                    {% endfor %}
+                                    <td class="uk-width-small">
+                                        <button class="uk-button uk-button-primary uk-button-small uk-border-pill"
+                                            onclick="loadModal({{ place[0] }})"><span uk-icon="file-edit"></span></button>
+                                        <button class="uk-button uk-button-danger uk-button-small uk-border-pill"
+                                            onclick="removePlace({{ place[0] }})"><span uk-icon="trash"></span></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+
+            </div>
+            <div id="modal" uk-modal>
+                <div class="uk-modal-dialog rounded-border">
+                    <button class="uk-modal-close-default uk-label-danger uk-border-pill" type="button"
+                        uk-close></button>
+                    <div class="uk-modal-header rounded-border">
+                        <h2 class="uk-modal-title" id="modal-title">Modal test</h2>
+                    </div>
+                    <div class="uk-modal-body uk-border-rounded">
+                        <div class="uk-margin">
+                            <div class="uk-inline uk-width-1-1 uk-margin-small-bottom">
+                                <label class="uk-form-label" for="name">Name</label>
+                                <input id="name" name="name" class="uk-input uk-form-small rounded-border" type="text"
+                                    required>
+                            </div>
+                            <div class="uk-inline uk-width-1-1 uk-margin-small-bottom">
+                                <label class="uk-form-label" for="description">Description</label>
+                                <textarea id="description" name="description" class="uk-textarea"
+                                    style="border-radius: 5px;" rows="3" required></textarea>
+                            </div>
+
+                            <div class="uk-inline uk-width-1-1 uk-margin-small-bottom">
+                                <label class="uk-form-label" for="phone">Phone</label>
+                                <input id="phone" name="phone" class="uk-input uk-form-small"
+                                    style="border-radius: 5px;" type="text" required>
+                            </div>
+
+                            <div class="uk-inline uk-width-1-1 uk-margin-small-bottom">
+                                <label class="uk-form-label" for="address">Address</label>
+                                <textarea id="address" name="address" class="uk-textarea rounded-border" rows="2"
+                                    required></textarea>
+                            </div>
+
+                            <div class="uk-inline uk-width-1-1 uk-margin-small-bottom">
+                                <label class="uk-form-label" for="coordinates">Coordinates (latitude,
+                                    longitude)</label>
+                                <input id="coordinates" name="coordinates" class="uk-input uk-form-small"
+                                    style="border-radius: 5px;" type="text"
+                                    placeholder="example: -19.852114891991153, -43.97813488174131" required>
+                            </div>
+
+                            <div class="uk-inline uk-width-1-1 uk-margin-small-bottom">
+                                <label class="uk-form-label uk-margin-right" for="txtTags">Tags (type the text then click on Add or
+                                    press Enter):</label>
+                                    <span id="btnAddTag" name="btnAddTag" class="uk-label uk-border-pill">
+                                        <a class="uk-link-reset" href="#">Add Tag</a>
+                                    </span>
+
+                                <input class="uk-input uk-form-small uk-margin-small-top rounded-border" type="text" id="txtTags"
+                                    value="" />
+                            </div>
+                            <div class="uk-inline uk-width-1-1 uk-margin-small-top">
+                                <div id="tags"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-modal-footer uk-text-right rounded-border">
+                        <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}" />
+                        <input type="hidden" id="id" name="id" value="" />
+                        <button class="uk-button uk-button-default uk-modal-close uk-border-pill uk-background-muted"
+                            type="button">Cancel</button>
+                        <button class="uk-button uk-button-primary uk-border-pill" type="button"
+                            onclick="savePlace()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+</body>
+<script src={{ url_for('static', filename='inputTag.js' ) }}></script>
+<script src={{ url_for('static', filename='admin.js' ) }}></script>
+<link rel="stylesheet" href={{ url_for('static', filename='admin.css' ) }} />
+
+<script>
+    if (getCookie('token') == '') {
+        window.location.href = '{{ url_for("user.admin") }}';
+    }
+</script>
+</html>

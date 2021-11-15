@@ -1,9 +1,7 @@
 import hashlib
 import json
-
+import os
 from sqlalchemy.util.langhelpers import NoneType
-
-
 class utils():
 
     @staticmethod
@@ -19,10 +17,10 @@ class utils():
     @staticmethod
     def get_hash(txt_to_hash, only_numeric=True):
 
-        txt = str(txt_to_hash).strip().encode('utf-8')
+        txt = str(os.getenv('SECRET_KEY') + txt_to_hash).strip().encode('utf-8')
 
-        if(txt is None or txt == ''):
-            raise TypeError('Texto informado incorreto', 400)
+        if(txt_to_hash is None or txt == ''):
+            raise TypeError('Invalid text', 400)
 
         sha_hash = hashlib.sha256(txt).hexdigest()
         md5_hash = hashlib.md5(txt).hexdigest()
@@ -65,4 +63,3 @@ class utils():
     @staticmethod
     def dict2str(dict):
         return str(json.dumps(dict, separators=(',', ':')))
-

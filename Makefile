@@ -1,6 +1,6 @@
 #!make
-include envfile
-export $(shell sed 's/=.*//' envfile)
+#include envfile
+#export $(shell sed 's/=.*//' envfile)
 
 clean:
 	@find ./ -name '*.pyc' -exec rm -f {} \;
@@ -16,13 +16,13 @@ clean:
 
 install:
 	PYTHONPATH=venv
-	pip install -r requirements.txt;
+	pip3 install -r requirements.txt
 
 test: run
 	rm -rf databases/test.db
 	docker exec $(CONTAINER_NAME) pytest /usr/src/app/tests/ -v --cov=tag-search
 
-build: env
+build:
 	docker-compose up -d --build
 
 run:

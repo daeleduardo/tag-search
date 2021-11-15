@@ -135,3 +135,7 @@ databases/*.db
 #configurations IDE files
 .vscode
 .idea
+
+#RS256 Keys
+*.pem
+*.pub

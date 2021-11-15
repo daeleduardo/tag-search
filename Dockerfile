@@ -7,15 +7,16 @@ WORKDIR /usr/src/app
 
 
 RUN apk update && apk upgrade
-RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN apk add python3 && apk add py3-pip
+RUN /usr/local/bin/python -m pip3 install --upgrade pip
 
 COPY . /usr/src/app
 RUN apk add postgresql-dev
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 
 
 # Expose the Flask port
 #EXPOSE 5000
 
-CMD [ "python", "/usr/src/app/tag_search/app.py" ]
+CMD [ "python", "/usr/src/app/tag-search/app.py" ]

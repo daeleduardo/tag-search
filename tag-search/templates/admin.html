@@ -5,117 +5,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>PBH Front App</title>
+    <title>Tag Search Login Page</title>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/css/uikit.min.css" />
 
-    <!-- Datatables UIkit CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.2/css/uikit.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.uikit.min.css" />    
-
-    <!-- Datatables UIkit JS -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.uikit.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.2/js/uikit.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.2/js/uikit-icons.min.js"></script>
-
+    <!-- UIkit JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/uikit@3.2.3/dist/js/uikit-icons.min.js"></script>
 </head>
 
 <body>
 
     <div id="app">
-        <div class="uk-section-xsmall uk-section-muted uk-animation-fade" uk-height-viewport>    
-                <div class="uk-container">
-                    <h3 class="uk-text-bold uk-text-capitalize">MENU</h3>
-                    <div class="uk-overflow-auto">
-                        <table id="contact_table" class="uk-table uk-table-responsive uk-table-striped uk-table-hover uk-table-small" aria-describedby="contact_table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nome</th>
-                                    <th>Tags</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                        </table>
+        <!--HEADER-->
+        <header class="uk-box-shadow-small uk-animation-slide-top-medium uk-background-default">
+            <div class="uk-container uk-container-expand">
+                <nav class="uk-navbar" id="navbar" data-uk-navbar>
+                    <div class="uk-navbar-left">
+                        <a class="uk-navbar-item uk-logo" href="#">Tag Search</a>
                     </div>
-                </div>
-                <div id="modal-edit" uk-modal>
-                    <div class="uk-modal-dialog">
-                        <button class="uk-modal-close-default" type="button" uk-close></button>
-                        <div class="uk-modal-header">
-                            <h2 class="uk-modal-title">MODAL</h2>
-                        </div>
-                        <div class="uk-modal-body">
-                            <div v-for=" item in this.modal.fields" class="uk-margin">
-                                <div class="uk-inline uk-width-1-1">
-                                    <input v-if="item.tag == 'input'" class="uk-input uk-form-large" type="item.type"
-                                        v-bind:placeholder="item.label" v-model="item.value" :disabled='item.disabled'
-                                        required>
-                                    <select v-else-if="item.tag == 'select'" class="uk-select">
-                                        <option v-for=" option in item.options" :value="option.id">OPTION
-                                        </option>
-                                    </select>
-                                </div>
+                </nav>
+            </div>
+        </header>
+        <!--/HEADER-->
+
+        <div class="uk-section-xsmall uk-section-muted uk-animation-fade" uk-height-viewport>
+            <div class="uk-width-1-1">
+                <div class="uk-container">
+                    <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
+                        <div class="uk-width-1-1@m">
+                            <div
+                                class="uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
+                                <h3 class="uk-card-title uk-text-center">Login</h3>
+                                <form action={{url_for("user.auth")}} method="post">
+                                    <input type="hidden" id="csrf_token"  name="csrf_token" value="{{ csrf_token() }}"/>
+                                    {% if error is defined %}
+                                    <h6><span class="uk-text-bolder uk-text-danger">{{ error }}</span></h6>
+                                    {% endif %}
+                                    <div class="uk-margin">
+                                        <div class="uk-inline uk-width-1-1">
+                                            <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                            <input id="username" name="username" class="uk-input uk-form-large uk-border-pill" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="uk-margin">
+                                        <div class="uk-inline uk-width-1-1">
+                                            <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                                            <input id="password" name="password" class="uk-input uk-form-large uk-border-pill" type="password">
+                                        </div>
+                                    </div>
+                                    <div class="uk-margin">
+                                        <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1 uk-border-pill">
+                                            Login
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <div class="uk-modal-footer uk-text-right">
-                            <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                            <button class="uk-button uk-button-primary" type="button" @click="saveItem"
-                                v-bind:disabled="disableBtnLogin">Save</button>
-                            <spinner v-show="showSpinner"></spinner>
-                        </div>
                     </div>
                 </div>
-            </section>
-
+            </div>
         </div>
     </div>
 
+
 </body>
-<script src="slugify.js"></script>
-<script src="fingerprint.js"></script>
+    
+<script src={{ url_for('static', filename = 'admin.js') }}></script>
+<link rel="stylesheet" href={{ url_for('static', filename = 'admin.css') }} />
 <script>
-
-$(document).ready(function() {
-
-   const url = "http://127.0.0.1:5000/contact/";
-   fetch(url).then(response => response.json()).then(data=>{
-        console.log(data);
-        for (const ele in data) {
-            data[ele].tags = data[ele].tags.replace(new RegExp(/[^\w\s]/,"ig"),"").split(" ");
-        }
-
-        $('#contact_table').DataTable( {
-            "processing": true,
-            "data": data,
-            "columns": [
-                { "data": "id_contacts" },
-                { "data": "name" },
-                { "data": "tags.[,]" },
-                {data: null, defaultContent: '<button class="uk-button uk-button-primary"><span uk-icon="file-edit"></span></button>'},
-                {data: null, defaultContent: '<button class="uk-button uk-button-danger"><span  uk-icon="trash"></span></button>'},
-            ]
-        } );
-    } );
-   }).catch(err => console.log(err))
-            
-    console.log(get_fingerprint());
-    function initFingerprintJS() {
-        // Initialize an agent at application startup.
-        const fpPromise = FingerprintJS.load()
-
-        // Get the visitor identifier when you need it.
-        fpPromise
-            .then(fp => fp.get())
-            .then(result => {
-                // This is the visitor identifier:
-                const visitorId = result.visitorId
-                console.log(visitorId)
-            })
-            .catch(error => console.error(error))
+    if (getCookie('token') != "") {
+        window.location.href = '{{ url_for("user.home") }}';
     }
 </script>
-<script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
-    onload="initFingerprintJS()" onerror="console.error('Failed to load the script')"></script>
-
 </html>
