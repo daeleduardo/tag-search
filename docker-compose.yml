@@ -5,10 +5,10 @@ volumes:
         driver: local
 
 services:
-    tag-search:
+    tag_search:
         build: .
-        image: tag-search
-        container_name: tag-search
+        image: tag_search
+        container_name: tag_search
         working_dir: /usr/src/app
         ports:
             - 80:${FLASK_PORT}

@@ -26,7 +26,7 @@ No atual momento, o sistema está em desenvolvimento, no entanto é possível ex
 
 ``source venv/bin/activate``
 ``pip3 install -r requirements.txt``
-``export FLASK_APP=tag-search/app.py``
+``export FLASK_APP=tag_search/app.py``
 ``flask run``
 
 

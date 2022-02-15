@@ -1,11 +1,6 @@
-import json,re
 from sqlalchemy.sql import text
-from sqlalchemy.sql.expression import update
-from sqlalchemy.exc import DatabaseError, DataError
-from ...ext.redis import db_cache
-from ...ext.constants import regex_pattern
-from ...ext.utils import utils
-from ...ext.models import Placestags, Session, Places, Tags, set_user_session
+from ext.utils import utils
+from ext.models import Session
 
 #TODO write a user CRUD
 class User():

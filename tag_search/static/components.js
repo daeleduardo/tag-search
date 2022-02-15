@@ -6,12 +6,20 @@ class Components {
     }
 
     placeTemplate = (data) => {
-        console.log(data.name);
+        let tagsHTML = '';
+        data.tags.split(",").forEach(tag => {
+            tagsHTML += `<li class="uk-text-capitalize" ><strong>&bull;</strong> ${tag}</li>`;
+        });
         return `
         <div>
             <h3 class="uk-card-title">${data.name}</h3>
-            <p>${data.description}</p>
-            <p><strong>Endereço: </strong>${data.address}</p>
+            <div>
+                <h4>Tags:</h4>
+                <ul class="uk-list uk-list-disc">
+                    ${tagsHTML}
+                </ul>
+            </div>
+            <p><strong>Localização: </strong>${data.latitude},${data.longitude}</p>
         </div>
         `;
     }
@@ -22,7 +30,7 @@ class Components {
         const iconSize = Math.round(screen.width * 0.026);
         const gradientId = 'grad_' + this.randomHash();
         const svgId = id;
-
+        
         return L.divIcon(
             {
                 className: '',
@@ -42,7 +50,6 @@ class Components {
 
     //Template do conteúdo que é exibido no popup.
     popup = (id, marker) => {
-
         let place = localStorage.getItem(`place_${id}`)
         if (place !== null) {
             const components = new Components();
@@ -75,7 +82,7 @@ class Components {
                 pos: 'top-center',
                 timeout: 5000
             });
-            console.log(error);
+            console.error(error);
         });
     }
 }

@@ -1,3 +1,50 @@
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    setTimeout(() => {
+        /* 
+	Create SLUG from a string
+	This function rewrite the string prototype and also 
+	replace latin and other special characters.
+	Forked by Gabriel Froes - https://gist.github.com/gabrielfroes
+	Original Author: Mathew Byrne - https://gist.github.com/mathewbyrne/1280286
+ */
+    if (!String.prototype.slugify) {
+        String.prototype.slugify = function () {
+    
+        return  this.toString().toLowerCase()
+        .replace(/[àÀáÁâÂãäÄÅåª]+/g, 'a')       // Special Characters #1
+        .replace(/[èÈéÉêÊëË]+/g, 'e')       	// Special Characters #2
+        .replace(/[ìÌíÍîÎïÏ]+/g, 'i')       	// Special Characters #3
+        .replace(/[òÒóÓôÔõÕöÖº]+/g, 'o')       	// Special Characters #4
+        .replace(/[ùÙúÚûÛüÜ]+/g, 'u')       	// Special Characters #5
+        .replace(/[ýÝÿŸ]+/g, 'y')       		// Special Characters #6
+        .replace(/[ñÑ]+/g, 'n')       			// Special Characters #7
+        .replace(/[çÇ]+/g, 'c')       			// Special Characters #8
+        .replace(/[ß]+/g, 'ss')       			// Special Characters #9
+        .replace(/[Ææ]+/g, 'ae')       			// Special Characters #10
+        .replace(/[Øøœ]+/g, 'oe')       		// Special Characters #11
+        .replace(/[%]+/g, 'pct')       			// Special Characters #12
+        .replace(/\s+/g, '-')           		// Replace spaces with -
+        .replace(/[^\w\-]+/g, '')       		// Remove all non-word chars
+        .replace(/\-\-+/g, '-')         		// Replace multiple - with single -
+        .replace(/^-+/, '')             		// Trim - from start of text
+        .replace(/-+$/, '');            		// Trim - from end of text
+        
+        };
+    }
+    }, 1500)
+
+});
+
 function loadModal(id = null) {
     
     if (id == null) {
@@ -15,9 +62,6 @@ function loadModalAdd() {
     document.getElementById('modal-title').innerText = 'Add Place';
     document.getElementById('id').value = '';
     document.getElementById('name').value = '';
-    document.getElementById('description').value = '';
-    document.getElementById('address').value = '';
-    document.getElementById('phone').value = '';
     document.getElementById('coordinates').value = '';
     document.getElementById('tags').innerHTML = '';
 
@@ -50,12 +94,10 @@ function loadModalEdit(id) {
             document.getElementById('modal-title').innerText = 'Edit Place';
             document.getElementById('id').value = id;
             document.getElementById('name').value = data.name;
-            document.getElementById('description').value = data.description;
-            document.getElementById('address').value = data.address;
-            document.getElementById('phone').value = data.phone;
-            document.getElementById('coordinates').value = `${data.longitude}, ${data.latitude}`;
-
-            for (let index in data.tags) {
+            document.getElementById('coordinates').value = `${data.latitude},${data.longitude}`;
+            
+            const arrTags = data.tags.split(",");
+            for (let index in arrTags) {
                 const close = document.createElement("button");
                 const attribute = document.createAttribute("uk-close");
 				attribute.value = '';
@@ -66,7 +108,7 @@ function loadModalEdit(id) {
                 });
                 const span = document.createElement('div');
                 span.classList.add('uk-badge', 'uk-background-secondary');
-                span.innerText = data.tags[index];
+                span.innerText = arrTags[index];
                 span.appendChild(close);
                 document.getElementById('tags').appendChild(span);
             }
@@ -114,7 +156,7 @@ function removePlace(id) {
 
 
     }, function () {
-        console.log('Rejected.')
+        console.error('Rejected.')
     });
 
 }
@@ -144,9 +186,7 @@ function savePlace() {
 
     let data = {
         'name': document.getElementById('name').value,
-        'description': document.getElementById('description').value,
-        'address': document.getElementById('address').value,
-        'phone': document.getElementById('phone').value,
+        'category': document.getElementById('category').value.slugify(),
         'latitude': lat,
         'longitude': lng,
         'tags': tagsArray
@@ -195,7 +235,6 @@ function updatePlace(params) {
 
 
 function successTransition(data) {
-    console.log(data);
     if (data.hasOwnProperty('code')) {
         if(data.code == 401){
             return window.location.replace("/admin");
@@ -217,7 +256,7 @@ function successTransition(data) {
 }
 
 function errorTransition(error) {
-    console.log(error);
+    console.error(error);
     const description = (error.hasOwnProperty('description')) ? error.description: '';
     UIkit.notification({
         message: `<span uk-icon='icon: ban'></span>Error to save the place.<br/>${description}`,

@@ -1,5 +1,5 @@
 import re
-from ...ext.constants import regex_pattern
+from ext.constants import regex_pattern
 class Tag():
 
     @staticmethod

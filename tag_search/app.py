@@ -1,15 +1,22 @@
 # -*- coding: utf-8 -*-
-import os
-from flask import Flask, render_template, jsonify, json, request, Response, g, redirect, url_for
-from flask_caching import Cache
+import os, sys
+from unicodedata import category
+
+
+sys.path.append(os.getcwd())
+sys.path.append(os.getcwd()+"/tag_search")
+sys.path.append(os.getcwd()+"/tag_search/ext")
+
+from flask import Flask, render_template, json, Response, redirect, url_for
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from sqlalchemy import inspect
 from sqlalchemy.exc import DataError, DatabaseError
 from werkzeug.exceptions import HTTPException
-from .ext import models, cache as cachemodule, utils, constants
-from .blueprints.place import views as viewsPlace
-from .blueprints.user import views as viewsUser
+from ext import models, cache as cachemodule, utils, constants
+from blueprints.place import views as viewsPlace
+from blueprints.user import views as viewsUser
+
 
 
 csrf = CSRFProtect()
@@ -120,9 +127,33 @@ def check_if_first_run():
     if exists_users is None and os.getenv("ADMIN_DEFAULT_PASS") is not None:
         pwd = utils.utils.get_hash(os.getenv("ADMIN_DEFAULT_PASS"), only_numeric=False)
         first_user = models.Users(
-            name="admin", email="admin@admin.com", password=pwd, is_admin=True, is_active=True)
+            name="admin", email="admin@admin.com", password=pwd, 
+            is_admin=True, is_active=True,id_create = 0)
         session.add(first_user)
         session.commit()
+
+        #se é um ambiente de demonstração cria um local padrão
+        if os.getenv("FLASK_ENV") == constants.env.MEMORY :
+            place = models.Places(
+                name = "Lagoa da Pampulha",
+                category = "outros",
+                latitude = "-19.852514986654832",
+                longitude = "-43.97841670946394"
+            )
+            session.add(place)
+            tags = ["lagoa", "pampulha"]
+            for idx, tag in enumerate(tags):
+                t = models.Tags(
+                    name = tag,
+                    hash_name = utils.utils.get_hash(tag)
+                )
+                pt = models.Placestags(
+                    id_place = 1,
+                    id_tag = (idx+1)
+                )
+                session.add(t)
+                session.add(pt)
+            session.commit()
 
 def is_treated_error(e):
     is_treated_error = True

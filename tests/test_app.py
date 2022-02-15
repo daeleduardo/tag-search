@@ -2,7 +2,7 @@ import os
 
 #verifica se o nome da aplicação é o que foi configurado previamente
 def test_app_name(app):
-    assert app.name == "tag-search.app"
+    assert app.name == "tag_search.app"
 
 #verifica se a mudança do ambiente para teste ocorreu com sucesso.
 def test_app_env():

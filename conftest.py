@@ -1,6 +1,6 @@
 #arquivo executado antes de iniciar os testes
 import pytest
-from tag-search.app import create_app
+from tag_search.app import create_app
 #classe com os dados que serão usados para validar as requisições
 class constants():
     CONTENT_TYPE = "application/json"

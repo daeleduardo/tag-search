@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="IE=edge">
-    <title>Mapper Place</title>
+    <title>Tag Search Demo</title>
     <meta name="description" content="Search places by tags">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -33,9 +33,9 @@
             <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-wrap uk-flex-column">
                 <div>
                     <label class="uk-form-label uk-hidden@m">
-                        <p>Enter the activity or location you are looking for:</p>
+                        <p>Search the place are looking for:</p>
                     </label>
-                    <h2 class="uk-heading-xsmall uk-visible@m">Enter the activity or location you are looking for:</h2>
+                    <h2 class="uk-heading-xsmall uk-visible@m">Search the place are looking for:</h2>
                 </div>
                 <div class="uk-inline uk-width-1-1">
                     <a onclick="filterMarkersByTags()" style="color:white" href="#" aria-label="Botão para busca"
@@ -45,17 +45,14 @@
                         placeholder="Tip here or click on search button....">
                         <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}"/>
                 </div>
-                <!--div class="uk-margin-top uk-flex uk-flex-center uk-flex-middle uk-flex-wrap">
-                    <span class="">Pesquisar por categorias:</span>
-                    <a onclick="filterMarkersByCategory('parques')" class="uk-text-decoration-none"><span
-                            class="uk-badge uk-margin-small-left">Parques</span></a>
-                    <a onclick="filterMarkersByCategory('praca')" class="uk-text-decoration-none"><span
-                            class="uk-badge uk-margin-small-left">Praças</span></a>
-                    <a onclick="filterMarkersByCategory('outros')" class="uk-text-decoration-none"><span
-                            class="uk-badge uk-margin-small-left">Outros</span></a>
+                <div class="uk-margin-top uk-flex uk-flex-center uk-flex-middle uk-flex-wrap">
+                    <span class="">Search by Category:</span>
+                    <div id="categories">
                     <a onclick="filterMarkersByCategory('')" class="uk-text-decoration-none"><span
-                            class="uk-badge uk-margin-small-left">Todas categorias</span></a>
-                </div-->
+                            class="uk-badge uk-margin-small-left">All Categories</span></a>
+                    </div>
+
+                </div>
                 <div id="spinner" uk-spinner></div>
             </div>
         </div>

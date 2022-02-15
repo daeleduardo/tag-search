@@ -7,16 +7,14 @@
 function addMarkerPlaces(db) {
     if (db !== null && db.length > 0) {
         const components = new Components();
+        const categories = [];
         db.forEach(place => {
+            
             const name = place.name.toLowerCase().replaceAll(/da |de |do /gi, '').slugify().replace(/[^\w\s]/gi, '');
             L.marker([place.latitude, place.longitude], { icon: components.icon(place.id, place.category, name) })
                 .addTo(map)
                 .on('click', function (e) {
-                    
                     components.popup(place.id,this);
-                    //this.unbindPopup();
-                    //this.bindPopup(content).openPopup(); 
-                        
                     const zoomLevel = Math.max(map.getZoom(), 15);
                     let bottomLat = e.latlng.lat;
 
@@ -36,6 +34,14 @@ function addMarkerPlaces(db) {
                     }
                     map.flyTo([(e.latlng.lat + bottomLat), e.latlng.lng], zoomLevel);
                 });
+
+            if (categories.indexOf(place.category) === -1) {
+                categories.push(place.category);
+                document.getElementById("categories").innerHTML += `
+                <a onclick="filterMarkersByCategory('${place.category}')" class="uk-text-decoration-none"><span
+                class="uk-badge uk-margin-small-left">${place.category}</span></a>
+                `
+            }
         });
     }
 
@@ -77,9 +83,8 @@ function filterMarkersByTags() {
 
     db.forEach(place => {
         //Une todos as tags em uma única do local em uma string e verifica com base nela para diminuir o número de interações.
-        let tagsString = place.tags.join();
         const name = place.name.toLowerCase().replaceAll(/da |de |do /gi, '').slugify().replaceAll("-", ',');
-        tagsString = tagsString + "," + name;
+        let tagsString = place.tags + "," + name;
         arrInput.forEach(txt => {
             if (tagsString.indexOf(txt) > -1) {
                 const id = place.name.toLowerCase().replaceAll(/da |de |do /gi, '').slugify().replace(/[^\w\s]/gi, '');

@@ -20,7 +20,7 @@ install:
 
 test: run
 	rm -rf databases/test.db
-	docker exec $(CONTAINER_NAME) pytest /usr/src/app/tests/ -v --cov=tag-search
+	docker exec $(CONTAINER_NAME) pytest /usr/src/app/tests/ -v --cov=tag_search
 
 build:
 	docker-compose up -d --build

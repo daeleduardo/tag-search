@@ -1,23 +1,15 @@
-import re , datetime
-from sqlalchemy.orm import query_expression, session
-from werkzeug.utils import redirect
+import datetime
 
 from .user import User
-from flask import Flask, render_template, jsonify, request, Response, url_for,Blueprint, render_template, make_response
-from flask.json import jsonify
+from flask import render_template, request, Blueprint, render_template, make_response
 
-from sqlalchemy.sql.expression import update
-from sqlalchemy.sql import text
-from sqlalchemy.exc import DatabaseError, DataError
-from ...ext.models import  Places, Session ,set_user_session
-from ...blueprints import user as userModule
-from ..place.place import Place
-from ...ext.cache import cache
-from ...ext.utils import utils
-from ...ext.jwt import jwt_handler
-from ...ext.redis import db_cache
-from ...ext.constants import cache_time
-from ...ext.middleware import auth_verify, jwt_verify
+from blueprints.place.place import Place as placeModule
+from ext.cache import cache
+from ext.utils import utils
+from ext.jwt import jwt_handler
+from ext.redis import db_cache
+from ext.constants import cache_time
+from ext.middleware import auth_verify, jwt_verify
 
 
 user = Blueprint('user', __name__,
@@ -61,7 +53,7 @@ def auth():
 @jwt_verify
 def home():
     data = {}
-    places = Place().get_place_all()
+    places = placeModule.get_place_all()
     if places :        
         data['places_keys'] = places[0]._fields,
         data['places'] = places

@@ -1,20 +1,15 @@
 import re
 
-from sqlalchemy.orm import query_expression
 from sqlalchemy.exc import DatabaseError, DataError
 from .place import Place
-from flask import Flask, render_template, jsonify, request, Response
+from flask import jsonify, request
 from flask.json import jsonify
-from sqlalchemy.sql.expression import update
-from sqlalchemy.sql import text
 from sqlalchemy import exc
-from ...ext.models import Placestags, Session, Places, Tags, set_user_session
-from ...ext.cache import cache
-from ...ext.utils import utils
-from ...ext.redis import db_cache
-from ...ext.constants import cache_time, regex_pattern
-from ...ext.middleware import jwt_verify
-from flask import Blueprint, render_template
+from ext.cache import cache
+from ext.utils import utils
+from ext.constants import cache_time, regex_pattern
+from ext.middleware import jwt_verify
+from flask import Blueprint
 
 place = Blueprint('place', __name__,
                     template_folder="../templates", url_prefix="/place")

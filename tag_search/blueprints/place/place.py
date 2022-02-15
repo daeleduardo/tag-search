@@ -1,19 +1,24 @@
 import re
+from unicodedata import category
 
 from sqlalchemy.exc import DataError, DatabaseError
-from sqlalchemy.orm import session
 from sqlalchemy.sql import text
 from sqlalchemy.sql.expression import update
 from flask import g
-from ..tag.Tag import Tag
-from ...ext.redis import db_cache
-from ...ext.constants import regex_pattern, cache_time
-from ...ext.utils import utils
-from ...ext.models import Placestags, Places, Tags, set_user_session, Session
-
+from blueprints.tag.Tag import Tag
+from ext.constants import regex_pattern, msgs
+from ext.utils import utils
+from ext.models import Placestags, Places, Tags, set_user_session, Session
 
 
 class Place():
+
+    #can be sqlite/mysql/postgresql
+    @staticmethod
+    def get_aggregate_function(session):
+        if session.connection().dialect.name == 'postgresql':
+            return "array_agg(DISTINCT t.name) AS tags"
+        return "group_concat(DISTINCT t.name) AS tags"
 
     @staticmethod
     def get_place_by_id(id):
@@ -26,12 +31,10 @@ class Place():
         sql = text("""
         SELECT  p.id_places,
                 p.name,
-                p.phone,
-                p.description,                
-                p.address,
+                p.category,
                 p.latitude,
                 p.longitude,
-                array_agg(DISTINCT t.name) AS tags
+                """+ Place.get_aggregate_function(session)+"""
         FROM places p
         LEFT JOIN places_tags pt ON p.id_places = pt.id_places
         LEFT JOIN tags t ON pt.id_tags = t.id_tags
@@ -58,12 +61,10 @@ class Place():
         sql = text("""
         SELECT  p.id_places,
                 p.name,
-                p.phone,
-                p.description,                
-                p.address,
+                p.category,
                 p.latitude,
                 p.longitude,
-                array_agg(DISTINCT t.name) AS tags
+                """+ Place.get_aggregate_function(session)+"""
         FROM places p
         INNER JOIN places_tags pt ON p.id_places = pt.id_places
         INNER JOIN tags t ON pt.id_tags = t.id_tags
@@ -82,9 +83,10 @@ class Place():
         sql = text("""
         SELECT  p.id_places as id,
                 p.name,
+                p.category,
                 p.latitude,
                 p.longitude,
-                array_agg(DISTINCT t.name) AS tags
+                """+ Place.get_aggregate_function(session)+"""
         FROM places p
         INNER JOIN places_tags pt ON p.id_places = pt.id_places
         INNER JOIN tags t ON pt.id_tags = t.id_tags
@@ -148,7 +150,7 @@ class Place():
     def check_if_place_exists(data):
         session = Session()
         count = session.query(Places).filter(
-            Places.name == data['name'], Places.phone == data['phone'], Places.address == data['address']).count()
+            Places.name == data['name']).count()
         session.close()
         return (int(count) > 0)
 
@@ -166,7 +168,7 @@ class Place():
         try:
             if g.token['id'] is None:
                 raise DatabaseError(
-                    'Error to add place, user not found.', 400)
+                    msgs.USER_NOT_FOUND, 400)
 
             if Tag.is_invalid_tags(data['tags']):
                 raise DatabaseError('Error to add place, invalid tags. ', 400)
@@ -199,9 +201,7 @@ class Place():
 
             place = Places(
                 name=str(data['name']).strip(),
-                phone=str(data['phone']).strip(),
-                address=str(data['address']).strip(),
-                description=str(data['description']).strip(),
+                category=str(data['category']).strip(),
                 latitude=data['latitude'],
                 longitude=data['longitude'])
 
@@ -215,9 +215,7 @@ class Place():
             id_places = str("""
                 (
                     SELECT id_places from places where
-                    name='"""+data['name']+"""' and
-                    phone='"""+data['phone']+"""' and
-                    address='"""+data['address']+"""'
+                    name='"""+data['name']+"""'
                 )
             """)
             sql = text("""
@@ -239,7 +237,7 @@ class Place():
             if session is not None:
                 session.rollback()
             raise AttributeError(
-                'Error to add place, user not found.', 400)
+                msgs.USER_NOT_FOUND, 400)
         except TypeError as e:
             if session is not None:
                 session.rollback()
@@ -272,9 +270,6 @@ class Place():
             place = update(Places).where(Places.id_places == data['id'])
             place = place.values(
                 name=data['name'],
-                phone=data['phone'],
-                address=data['address'],
-                description=data['description'],
                 latitude=data['latitude'],
                 longitude=data['longitude'])
 
@@ -324,7 +319,7 @@ class Place():
             if session is not None:
                 session.rollback()
             raise AttributeError(
-                'Error to add place, user not found.', 400)
+                msgs.USER_NOT_FOUND, 400)
         except TypeError as e:
             if session is not None:
                 session.rollback()

@@ -1,9 +1,7 @@
 from functools import wraps
 from flask import Response, request, g
-from sqlalchemy.sql.functions import user
 from werkzeug.wrappers import Response
-from ..blueprints.user import user as userModule
-from ..ext.jwt import jwt_handler
+from ext.jwt import jwt_handler
 
 def jwt_verify(func):
     @wraps(func)
