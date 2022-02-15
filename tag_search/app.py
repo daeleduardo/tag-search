@@ -117,7 +117,7 @@ def load_appconfig(app):
 def check_if_first_run():
     inspector = inspect(models.engine)
     tables = inspector.get_table_names()
-    if 'users' not in tables:
+    if len(tables) == 0:
         # carrega os metadados do banco de dados
         models.base.metadata.create_all(models.engine)
 
