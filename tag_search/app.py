@@ -102,8 +102,8 @@ def load_appconfig(app):
     app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY')
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_SECURE'] = True
-    app.config['JWT_SECRET_KEY'] = open('rs256.pem').read()
-    app.config['JWT_PUBLIC_KEY'] = open('rs256.pub').read()
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_PRIVATE_KEY')
+    app.config['JWT_PUBLIC_KEY'] = os.getenv('JWT_PUBLIC_KEY')
 
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
     app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')
