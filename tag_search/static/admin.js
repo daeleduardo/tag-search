@@ -94,6 +94,7 @@ function loadModalEdit(id) {
             document.getElementById('modal-title').innerText = 'Edit Place';
             document.getElementById('id').value = id;
             document.getElementById('name').value = data.name;
+            document.getElementById('category').value = data.category;
             document.getElementById('coordinates').value = `${data.latitude},${data.longitude}`;
             
             const arrTags = data.tags.split(",");
