@@ -8,7 +8,7 @@ Criar o prototipo de um sistema de busca de atividades e locais, na forma de um 
 
 https://tag-search-flask.herokuapp.com/
 
-![Demonstracao](https://i.ibb.co/RzKwFfL/tag-search-sized.gif)
+![Demonstracao](https://i.ibb.co/PGKbZ5C/tag-search-sized.gif)
 
 ## Endereços ##
 
