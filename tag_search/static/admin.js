@@ -192,6 +192,7 @@ function savePlace() {
         'tags': tagsArray
     }
 
+    localStorage.clear();
     if (document.getElementById('id').value != '') {
         data['id'] = document.getElementById('id').value;
         return updatePlace(data);
