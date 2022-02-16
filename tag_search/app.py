@@ -7,7 +7,7 @@ sys.path.append(os.getcwd())
 sys.path.append(os.getcwd()+"/tag_search")
 sys.path.append(os.getcwd()+"/tag_search/ext")
 
-from flask import Flask, render_template, json, Response, redirect, url_for
+from flask import Flask, render_template, json, Response, redirect, url_for , g, session
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 from sqlalchemy import inspect
@@ -33,6 +33,12 @@ def create_app():
     # adiciona na aplicação o método responsável tratar a mensagem de erro e retornar ao usuário
     add_error_handler(app)
     check_if_first_run()
+
+    @app.before_request
+    def fix_missing_csrf_token():
+        if app.config['WTF_CSRF_FIELD_NAME'] not in session and app.config['WTF_CSRF_FIELD_NAME'] in g:
+            g.pop(app.config['WTF_CSRF_FIELD_NAME'])
+
     return app
 
 # método que recebe as mensagens e retorna em um formato padrão para o usuário.
