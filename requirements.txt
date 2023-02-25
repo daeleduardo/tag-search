@@ -8,7 +8,7 @@ cffi==1.15.0
 click==8.0.3
 coverage==6.0.2
 cryptography==35.0.0
-dataclasses==0.8
+dataclasses==0.6
 distlib==0.3.3
 filelock==3.3.1
 Flask==2.0.2
@@ -27,7 +27,7 @@ packaging==21.0
 pipenv==2021.5.29
 platformdirs==2.4.0
 pluggy==1.0.0
-psycopg2==2.7.7
+psycopg2-binary
 py==1.10.0
 pycodestyle==2.8.0
 pycparser==2.20
