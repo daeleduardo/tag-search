@@ -6,7 +6,7 @@ Criar o prototipo de um sistema de busca de atividades e locais, na forma de um 
 
 ## Demonstração ##
 
-https://tag-search-flask.herokuapp.com/
+https://tag-search.onrender.com
 
 ![Demonstracao](https://i.ibb.co/PGKbZ5C/tag-search-sized.gif)
 

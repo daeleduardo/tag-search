@@ -3,7 +3,6 @@ from unicodedata import category
 
 from sqlalchemy.sql.sqltypes import DECIMAL, BigInteger
 
-
 from constants import env
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
