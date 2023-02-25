@@ -3,16 +3,16 @@ attrs==21.2.0
 autopep8==1.5.7
 backports.entry-points-selectable==1.1.0
 blinker==1.4
-certifi==2021.10.8
+certifi>=2022.12.07
 cffi==1.15.0
 click==8.0.3
 coverage==6.0.2
-cryptography==35.0.0
+cryptography>=39.0.1
 dataclasses==0.6
 distlib==0.3.3
 filelock==3.3.1
 Flask==2.0.2
-Flask-Caching==1.10.1
+Flask-Caching<=1.10.2
 Flask-Mail==0.9.1
 Flask-WTF==0.15.1
 greenlet==1.1.2
@@ -31,7 +31,7 @@ psycopg2-binary
 py==1.10.0
 pycodestyle==2.8.0
 pycparser==2.20
-PyJWT==2.3.0
+PyJWT==2.4.0
 pyparsing==2.4.7
 pytest==6.2.5
 pytest-cov==3.0.0
@@ -45,6 +45,6 @@ tomli==1.2.1
 typing-extensions==3.10.0.2
 virtualenv==20.8.1
 virtualenv-clone==0.5.7
-Werkzeug==2.0.2
+Werkzeug==2.2.3
 WTForms==2.3.3
 zipp==3.6.0
