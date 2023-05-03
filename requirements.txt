@@ -37,7 +37,7 @@ pytest==6.2.5
 pytest-cov==3.0.0
 pytest-flask==1.2.0
 python-dotenv==0.19.1
-redis==3.5.3
+redis==4.3.6
 six==1.16.0
 SQLAlchemy==1.4.25
 toml==0.10.2
