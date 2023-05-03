@@ -11,7 +11,7 @@ cryptography>=39.0.1
 dataclasses==0.6
 distlib==0.3.3
 filelock==3.3.1
-Flask==2.0.2
+Flask==2.2.5
 Flask-Caching<=1.10.2
 Flask-Mail==0.9.1
 Flask-WTF==0.15.1
