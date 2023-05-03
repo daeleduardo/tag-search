@@ -28,7 +28,7 @@ pipenv==2022.1.8
 platformdirs==2.4.0
 pluggy==1.0.0
 psycopg2-binary
-py==1.10.0
+py==1.10.7
 pycodestyle==2.8.0
 pycparser==2.20
 PyJWT==2.4.0
