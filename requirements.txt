@@ -43,7 +43,7 @@ SQLAlchemy==1.4.25
 toml==0.10.2
 tomli==1.2.1
 typing-extensions==3.10.0.2
-virtualenv==20.8.1
+virtualenv>=20.26.6
 virtualenv-clone==0.5.7
 Werkzeug==2.2.3
 WTForms==2.3.3
